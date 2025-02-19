@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+	<title>SEEEGMAAAAA</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+	<style>
+		body {
+			margin: 0;
+			overflow: hidden;
+			background-color: black;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+		.container {
+			position: relative;
+			width: 100vw;
+			height: 100vh;
+		}
+		.block {
+			position: absolute;
+			width: 100px;
+			height: 100px;
+			background: black;
+			border-radius: 10px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: white;
+			font-size: 14px;
+			cursor: pointer;
+			transition: transform 0.5s, width 0.5s, height 0.5s, border-radius 0.5s;
+		}
+		.expanded {
+			width: 300px;
+			height: 300px;
+			transform: translate(-50%, -50%);
+			border-radius: 20px;
+		}
+		.close-btn {
+			position: absolute;
+			top: 10px;
+			right: 10px;
+			background: transparent;
+			color: white;
+			border: none;
+			font-size: 20px;
+			cursor: pointer;
+			display: block;
+		}
+		.gradient-bg {
+			position: fixed;
+			width: 100vw;
+			height: 100vh;
+			background: linear-gradient(45deg, green, blue);
+			background-size: 400% 400%;
+			animation: gradientAnimation 5s infinite alternate;
+			z-index: -1;
+		}
+		@keyframes gradientAnimation {
+			0%	 { background-position: 0% 50%; }
+			100% { background-position: 100% 50%; }
+		}
+		.profile-pic {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			width: 120px;
+			height: 120px;
+			border-radius: 50%;
+			border: 3px solid white;
+			object-fit: cover;
+		}
+		.media-icons {
+			display: flex;
+			gap: 15px;
+		}
+		.media-icons a {
+			color: white;
+			font-size: 24px;
+			text-decoration: none;
+		}
+	</style>
+</head>
+<body>
+	<div class="gradient-bg"></div>
+	<div class="container">
+		<img src="fun.jpg" alt="Profile Picture" class="profile-pic"/>
+		<div class="block" id="block1" style="top: 20px; left: 20px;">Block 1</div>
+		<div class="block" id="block2" style="top: 20px; right: 20px;">Block 2</div>
+		<div class="block" id="block3" style="bottom: 20px; left: 20px;">Block 3</div>
+		<div class="block" id="block4" style="bottom: 20px; right: 20px;">
+			<i class="fab fa-github"></i>
+			<i class="fab fa-spotify"></i>
+		</div>
+	</div>
+
+	<script>
+		let expandedBlock = null;
+
+		document.querySelectorAll('.block').forEach(block => {
+			const originalPosition = {
+				top: block.style.top,
+				left: block.style.left,
+				right: block.style.right,
+				bottom: block.style.bottom
+			};
+
+			block.addEventListener('click', function(event) {
+				if (this.classList.contains('expanded')) {
+					this.classList.remove('expanded');
+					this.style.position = 'absolute';
+					this.style.top = originalPosition.top;
+					this.style.left = originalPosition.left;
+					this.style.right = originalPosition.right;
+					this.style.bottom = originalPosition.bottom;
+					this.style.transform = '';
+					this.innerHTML = this.dataset.originalContent;
+					expandedBlock = null;
+				} else {
+					if (expandedBlock) {
+						expandedBlock.classList.remove('expanded');
+						expandedBlock.style.position = 'absolute';
+						expandedBlock.style.top = originalPosition.top;
+						expandedBlock.style.left = originalPosition.left;
+						expandedBlock.style.right = originalPosition.right;
+						expandedBlock.style.bottom = originalPosition.bottom;
+						expandedBlock.style.transform = '';
+						expandedBlock.innerHTML = expandedBlock.dataset.originalContent;
+					}
+
+					this.classList.add('expanded');
+					this.style.position = 'fixed';
+					this.style.top = '50%';
+					this.style.left = '50%';
+					this.style.right = '';
+					this.style.bottom = '';
+					this.style.transform = 'translate(-50%, -50%)';
+					this.dataset.originalContent = this.innerHTML;
+
+					let message = `<p>Hello, This is ${this.innerText}</p>`;
+					if (this.innerText.trim() === 'Block 1') {
+						message = '<p>Hi Block 1</p>';
+					} else if (this.innerText.trim() === 'Block 2') {
+						message = '<p>Yo Block 2</p>';
+					} else if (this.id === 'block4') {
+						message = `<div class="media-icons">
+							<a href="https://github.com/YZFloppa" target="_blank">
+								<i class="fab fa-github"></i>
+							</a>
+							<a href="https://spotify.com/" target="_blank">
+								<i class="fab fa-spotify"></i>
+							</a>
+						</div>`;
+					}
+					this.innerHTML = message;
+
+					let closeButton = document.createElement('button');
+					closeButton.innerText = 'X';
+					closeButton.classList.add('close-btn');
+					this.appendChild(closeButton);
+
+					closeButton.addEventListener('click', (e) => {
+						e.stopPropagation();
+						this.classList.remove('expanded');
+						this.style.position = 'absolute';
+						this.style.top = originalPosition.top;
+						this.style.left = originalPosition.left;
+						this.style.right = originalPosition.right;
+						this.style.bottom = originalPosition.bottom;
+						this.style.transform = '';
+						this.innerHTML = this.dataset.originalContent;
+						expandedBlock = null;
+					});
+
+					expandedBlock = this;
+				}
+			});
+		});
+	</script>
+</body>
+</html>
